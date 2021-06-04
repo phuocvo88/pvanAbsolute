@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace practiceAPIOpenWeather
 {
     [TestFixture]
-    public class Tests
+    public class TestOpenWeatherEndPoint
     {
        
 
@@ -98,6 +98,37 @@ namespace practiceAPIOpenWeather
             bool validation = false;
 
             if (weathrResponse.cod == 200 && weathrResponse.name == "Hanoi")
+            {
+                validation = true;
+            }
+
+            Assert.IsTrue(validation);
+
+        }
+        [TestCase("Ha Noi", "2f45ec1571c6451311ed3c4b5937678b", "Hanoi")]
+        [TestCase("London", "2f45ec1571c6451311ed3c4b5937678b", "London")]
+        [Test]
+        public void TestValidCityNameWithDataDriven(string cityName, string apiKey, string expectedResult)
+        {
+            var requestObj = new Request_CurrentWeather();
+
+            string url = String.Format(requestObj.getWeatherByCityName, cityName, apiKey);
+
+            Console.WriteLine("url = " + url);
+            //throw new Exception();
+
+            var client = new RestClient(url);
+
+            var request = new RestRequest();
+
+            var response = client.Get(request);
+
+            Console.WriteLine("response raw data \r\n" + response.Content.ToString());
+
+            Response_CurrentWeatherData weathrResponse = JsonConvert.DeserializeObject<Response_CurrentWeatherData>(response.Content.ToString());
+            bool validation = false;
+
+            if (weathrResponse.cod == 200 && weathrResponse.name == expectedResult)
             {
                 validation = true;
             }
